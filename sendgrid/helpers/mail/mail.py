@@ -716,10 +716,10 @@ class Mail(object):
         if isinstance(value, tuple):
             value = ReplyTo(value[0], value[1])
 
-        if self.reply_to_list is None:
-            self.reply_to_list = []
+        if self._reply_to_list is None:
+            self._reply_to_list = []
 
-        self.reply_to_list.append(value)
+        self._reply_to_list.append(value)
 
     @property
     def contents(self):
