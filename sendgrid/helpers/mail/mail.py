@@ -60,6 +60,7 @@ class Mail(object):
         self._ip_pool_name = None
         self._mail_settings = None
         self._reply_to = None
+        self._reply_to_list = None
         self._send_at = None
         self._subject = None
         self._template_id = None
@@ -696,6 +697,31 @@ class Mail(object):
         self._reply_to = value
 
     @property
+    def reply_to_list(self):
+        """The reply to email addresses"""
+        return self._reply_to_list
+
+    @reply_to_list.setter
+    def reply_to_list(self, value):
+        if isinstance(value, list):
+            for email in value:
+                self.add_reply_to_list(email)
+        else:
+            self.add_reply_to_list(value)
+
+    def add_reply_to_list(self, value):
+
+        if isinstance(value, str):
+            value = ReplyTo(value, None)
+        if isinstance(value, tuple):
+            value = ReplyTo(value[0], value[1])
+
+        if self.reply_to_list is None:
+            self.reply_to_list = []
+
+        self.reply_to_list.append(value)
+
+    @property
     def contents(self):
         """The contents of the email
 
@@ -980,8 +1006,13 @@ class Mail(object):
             'ip_pool_name': self._get_or_none(self.ip_pool_name),
             'mail_settings': self._get_or_none(self.mail_settings),
             'tracking_settings': self._get_or_none(self.tracking_settings),
-            'reply_to': self._get_or_none(self.reply_to),
         }
+
+        if self._get_or_none(self.reply_to):
+            mail['reply_to'] = self._get_or_none(self.reply_to)
+        elif self._get_or_none(self.reply_to_list):
+            mail['reply_to_list'] = self._get_or_none(self.reply_to_list)
+
 
         return {key: value for key, value in mail.items()
                 if value is not None and value != [] and value != {}}
