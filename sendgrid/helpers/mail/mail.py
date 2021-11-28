@@ -1008,10 +1008,10 @@ class Mail(object):
             'tracking_settings': self._get_or_none(self.tracking_settings),
         }
 
-        if self._get_or_none(self.reply_to):
+        if self.reply_to:
             mail['reply_to'] = self._get_or_none(self.reply_to)
-        elif self._get_or_none(self.reply_to_list):
-            mail['reply_to_list'] = self._get_or_none(self.reply_to_list)
+        elif self.reply_to_list:
+            mail['reply_to_list'] = [r.get() for r in self.reply_to_list]
 
 
         return {key: value for key, value in mail.items()
